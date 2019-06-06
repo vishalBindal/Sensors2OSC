@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import org.sensors2.osc.R;
+import org.sensors2.R;
 import org.sensors2.osc.dispatch.Bundling;
 import org.sensors2.osc.dispatch.SensorConfiguration;
 

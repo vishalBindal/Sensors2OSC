@@ -9,7 +9,7 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import org.sensors2.osc.R;
+import org.sensors2.R;
 import org.sensors2.osc.dispatch.Bundling;
 import org.sensors2.osc.fragments.HelpSensorFragment;
 import org.sensors2.osc.sensors.Parameters;

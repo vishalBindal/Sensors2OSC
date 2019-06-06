@@ -45,4 +45,8 @@
     <string name="text_available_sensors">Sensores disponíveis</string>
     <string name="text_guide">Dependendo do seu dispositivo, você terá vários sensores e coordenadas disponíveis.</string>
     <string name="text_guide_headline">Ajuda</string>
+    <string name="current_value">Valor atual</string>
+    <string name="sensor_continuously">Enviar dado continuamente</string>
+    <string name="sensor_rate">Frequência de amostragem dos sensores</string>
+    <string name="sensor_rate_explanation">Uma frequência alta resulta em mensagens com saltos menores entre amostras, mas gastará mais bateria.</string>
 </resources>

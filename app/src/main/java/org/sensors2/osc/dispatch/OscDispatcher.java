@@ -18,8 +18,12 @@ import java.util.List;
 public class OscDispatcher implements DataDispatcher {
     private List<SensorConfiguration> sensorConfigurations = new ArrayList<SensorConfiguration>();
     private OscCommunication communication;
-    private float[] gravity;
-    private float[] geomagnetic;
+    //private float[] gravity;
+    //private float[] geomagnetic;
+    private float[] rotationMatrix = new float[16];
+    private float[] orientations = new float[3];
+    private float[] projections = new float[3];
+    private float meanAzimuth = 0;
     private SensorManager sensorManager;
 
     public OscDispatcher() {
@@ -31,17 +35,46 @@ public class OscDispatcher implements DataDispatcher {
         this.sensorConfigurations.add(sensorConfiguration);
     }
 
+    public void set()
+    {
+        this.meanAzimuth = this.orientations[0];
+    }
+
     @Override
     public void dispatch(Measurement sensorData) {
         for (SensorConfiguration sensorConfiguration : this.sensorConfigurations) {
             if (sensorConfiguration.getSensorType() == sensorData.getSensorType()) {
                 if (sensorData.getValues() != null) {
-                    trySend(sensorConfiguration, sensorData.getValues());
-                } else {
+                    if (sensorConfiguration.getSensorType()==Sensor.TYPE_ROTATION_VECTOR)
+                    {
+                        float x, y, z, length=20;
+                        SensorManager.getRotationMatrixFromVector(rotationMatrix, sensorData.getValues());
+                        SensorManager.getOrientation(rotationMatrix, orientations);
+                        x = length * (float) Math.sin(orientations[0] - meanAzimuth);
+                        //Since azimuth is angle from the plane perpendicular to ground and along North,
+                        // azimuth - meanAzimuth gives angle moved from mean position along horizontal
+                        // So x = const * sin of that angle
+                        y = length * (float) Math.sin(orientations[1]);
+                        //Since pitch is angle from plane parallel to ground,
+                        // y = const * sin of that angle
+                        y = y * (-1);
+                        // To make y positive when phone is tilted upwards
+                        //Units of x and y = unknown ( depend on units of variable "length")
+                        z = length * (float) (Math.cos(orientations[0] - meanAzimuth) + Math.cos(orientations[1]));
+                        projections[0] = x;
+                        projections[1] = y;
+                        projections[2] = z;
+                        trySend(sensorConfiguration, projections);
+                    }
+                    else
+                        trySend(sensorConfiguration, sensorData.getValues());
+                }
+                else
+                    {
                     trySend(sensorConfiguration, sensorData.getStringValue());
                 }
             }
-            if (sensorConfiguration.getSensorType() == Parameters.FAKE_ORIENTATION || sensorConfiguration.getSensorType() == Parameters.INCLINATION) {
+            /*if (sensorConfiguration.getSensorType() == Parameters.FAKE_ORIENTATION || sensorConfiguration.getSensorType() == Parameters.INCLINATION) {
                 // Fake orientation
                 if (sensorData.getSensorType() != Sensor.TYPE_ACCELEROMETER && sensorData.getSensorType() != Sensor.TYPE_MAGNETIC_FIELD) {
                     continue;
@@ -71,7 +104,7 @@ public class OscDispatcher implements DataDispatcher {
                         }
                     }
                 }
-            }
+            }*/
         }
     }
 

@@ -9,7 +9,7 @@ import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import org.sensors2.osc.R;
+import org.sensors2.R;
 
 
 public class AboutActivity extends Activity {

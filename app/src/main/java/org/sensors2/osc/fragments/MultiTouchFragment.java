@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import org.sensors2.common.dispatch.DataDispatcher;
 import org.sensors2.common.dispatch.Measurement;
-import org.sensors2.osc.R;
+import org.sensors2.R;
 import org.sensors2.osc.activities.StartUpActivity;
 import org.sensors2.osc.dispatch.OscDispatcher;
 import org.sensors2.osc.dispatch.SensorConfiguration;

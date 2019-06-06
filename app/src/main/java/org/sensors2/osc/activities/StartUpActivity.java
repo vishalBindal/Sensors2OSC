@@ -25,7 +25,9 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.SupportActivity;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -33,14 +35,16 @@ import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
-
+//https://github.com/SensorApps/Common/tree/master/src/main/java/org/sensors2/common
+// The "common" package
 import org.sensors2.common.dispatch.DataDispatcher;
 import org.sensors2.common.dispatch.Measurement;
 import org.sensors2.common.nfc.NfcActivity;
 import org.sensors2.common.sensors.Parameters;
 import org.sensors2.common.sensors.SensorActivity;
 import org.sensors2.common.sensors.SensorCommunication;
-import org.sensors2.osc.R;
+// The user defined package in directory org.sensors2.osc
+import org.sensors2.R;
 import org.sensors2.osc.dispatch.OscConfiguration;
 import org.sensors2.osc.dispatch.OscDispatcher;
 import org.sensors2.osc.dispatch.SensorConfiguration;
@@ -54,7 +58,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class StartUpActivity extends FragmentActivity implements SensorActivity, NfcActivity, CompoundButton.OnCheckedChangeListener, View.OnTouchListener {
+public class StartUpActivity extends FragmentActivity implements SensorActivity, NfcActivity,
+        CompoundButton.OnCheckedChangeListener, View.OnTouchListener {
 
     private Settings settings;
     private SensorCommunication sensorCommunication;
@@ -83,15 +88,18 @@ public class StartUpActivity extends FragmentActivity implements SensorActivity,
         this.sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         this.dispatcher.setSensorManager(this.sensorManager);
         this.sensorCommunication = new SensorCommunication(this);
-        this.wakeLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, this.getLocalClassName());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
-            resolveIntent(getIntent());
-            nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-            mPendingIntent = PendingIntent.getActivity(this, 0,
-                    new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-            mNdefPushMessage = new NdefMessage(new NdefRecord[]{newTextRecord(
-                    "Message from NFC Reader :-)", Locale.ENGLISH, true)});
-        }
+        this.wakeLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(
+                PowerManager.SCREEN_DIM_WAKE_LOCK, this.getLocalClassName());
+        // Check for alternatives for this
+
+        resolveIntent(getIntent());
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        mPendingIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, getClass()).addFlags(
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        mNdefPushMessage = new NdefMessage(new NdefRecord[]{newTextRecord(
+                "Message from NFC Reader :-)", Locale.ENGLISH, true)});
+
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
@@ -110,11 +118,13 @@ public class StartUpActivity extends FragmentActivity implements SensorActivity,
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
             nfcAdapter = NfcAdapter.getDefaultAdapter(this);
             if (nfcAdapter != null && nfcAdapter.isEnabled()) {
-                parameters.add(new org.sensors2.osc.sensors.Parameters(nfcAdapter, this.getApplicationContext()));
+                parameters.add(new org.sensors2.osc.sensors.Parameters(nfcAdapter,
+                        this.getApplicationContext()));
             }
         }
         // add device sensors
-        parameters.addAll(org.sensors2.osc.sensors.Parameters.GetSensors(sensorManager, this.getApplicationContext()));
+        parameters.addAll(org.sensors2.osc.sensors.Parameters.GetSensors(sensorManager,
+                this.getApplicationContext()));
         return parameters;
     }
 
@@ -324,7 +334,7 @@ public class StartUpActivity extends FragmentActivity implements SensorActivity,
                 startActivity(intent);
                 return true;
             }
-            case R.id.action_guide: {
+            /*case R.id.action_guide: {
                 Intent intent = new Intent(this, GuideActivity.class);
                 startActivity(intent);
                 return true;
@@ -333,7 +343,7 @@ public class StartUpActivity extends FragmentActivity implements SensorActivity,
                 Intent intent = new Intent(this, AboutActivity.class);
                 startActivity(intent);
                 return true;
-            }
+            }*/
         }
         return super.onOptionsItemSelected(item);
     }
@@ -351,7 +361,8 @@ public class StartUpActivity extends FragmentActivity implements SensorActivity,
 
         if (nfcAdapter != null) {
             if (nfcAdapter.isEnabled()) {
-                nfcAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
+                nfcAdapter.enableForegroundDispatch(this, mPendingIntent, null,
+                        null);
                 nfcAdapter.enableForegroundNdefPush(this, mNdefPushMessage);
             }
 
@@ -473,6 +484,27 @@ public class StartUpActivity extends FragmentActivity implements SensorActivity,
                 else {
                     return ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
                 }
+        }
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+        switch (keyCode) {
+            // setting mean value of Azimuth when either of volume keys are pressed
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    this.dispatcher.set();
+                }
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    this.dispatcher.set();
+                }
+                return true;
+            default:
+                return super.dispatchKeyEvent(event);
         }
     }
 }

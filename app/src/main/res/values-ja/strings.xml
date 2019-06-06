@@ -67,4 +67,10 @@
     <string name="sensor_pick_up_gesture">ピックアップジェスチャー</string>
     <string name="sensor_wrist_tilt_gesture">手首傾きジェスチャー</string>
     <string name="sensor_unknown">不明なセンサー</string>
+    <!--<string name="app_name">Common</string>
+    <string name="sensors">センサー</string>-->
+    <string name="sensor_rate_explanation">レートが速いとより詳細なメッセージを取得することができますが、バッテリーの消耗が早くなります。</string>
+    <string name="sensor_rate">センサーレート</string>
+    <string name="sensor_continuously">連続してデータを送信する</string>
+    <string name="current_value">現在の値</string>
 </resources>

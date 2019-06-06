@@ -6,7 +6,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.nfc.NfcAdapter;
 
-import org.sensors2.osc.R;
+import org.sensors2.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,34 +21,38 @@ public class Parameters extends org.sensors2.common.sensors.Parameters {
     public static List<Parameters> GetSensors(SensorManager sensorManager, Context applicationContext) {
         List<Parameters> parameters = new ArrayList<>();
         // add device sensors
-        List<Integer> addedSensors = new ArrayList<>();
-        for (Sensor sensor : sensorManager.getSensorList(Sensor.TYPE_ALL)) {
+        //List<Integer> addedSensors = new ArrayList<>();
+        List<Sensor> required_sensors = new ArrayList<>();
+        required_sensors.add(sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE));
+        required_sensors.add(sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR));
+        required_sensors.add(sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
+        for (Sensor sensor : required_sensors) {
             // Sensors may be listed twice: wake up and non wake up, see https://github.com/SensorApps/Sensors2OSC/issues/17
             int sensorType = sensor.getType();
-            if (addedSensors.contains(sensorType)) {
+            /*if (addedSensors.contains(sensorType)) {
                 continue;
-            }
-            addedSensors.add(sensorType);
+            }*/
+            //addedSensors.add(sensorType);
             parameters.add(new org.sensors2.osc.sensors.Parameters(sensor, applicationContext));
         }
         // 3: TYPE_ORIENTATION This constant was deprecated in API level 8. use SensorManager.getOrientation() instead.
         // We need 1 (accelerometer) and 2 (magnetic field) to use it.
-        if (!addedSensors.contains(3) && addedSensors.contains(1) && addedSensors.contains(2)) {
-            parameters.add(createFakeOrientationSensor(applicationContext));
-        }
-        if (addedSensors.contains(1) && addedSensors.contains(2)) {
-            parameters.add(createInclinationSensor(applicationContext));
-        }
+        //if (!addedSensors.contains(3) && addedSensors.contains(1) && addedSensors.contains(2)) {
+          //  parameters.add(createFakeOrientationSensor(applicationContext));
+        //}
+        //if (addedSensors.contains(1) && addedSensors.contains(2)) {
+          //  parameters.add(createInclinationSensor(applicationContext));
+        //}
         return parameters;
     }
 
-    private static Parameters createFakeOrientationSensor(Context applicationContext) {
+   /* private static Parameters createFakeOrientationSensor(Context applicationContext) {
         return new Parameters("orientation", getString(R.string.sensor_orientation, applicationContext), FAKE_ORIENTATION);
     }
 
     private static Parameters createInclinationSensor(Context applicationContext) {
         return new Parameters("inclination", getString(R.string.sensor_inclination, applicationContext), INCLINATION);
-    }
+    }*/
 
     private Parameters(String oscPrefix, String name, int sensorType) {
         super(sensorType);
@@ -65,7 +69,7 @@ public class Parameters extends org.sensors2.common.sensors.Parameters {
                 this.oscPrefix = "accelerometer";
                 break;
             // 2 int TYPE_MAGNETIC_FIELD A constant describing a magnetic field sensor type.
-            case 2:
+           /* case 2:
                 this.name = getString(R.string.sensor_magnetic_field, applicationContext);
                 this.oscPrefix = "magneticfield";
                 break;
@@ -73,14 +77,14 @@ public class Parameters extends org.sensors2.common.sensors.Parameters {
             case 3:
                 this.name = getString(R.string.sensor_orientation, applicationContext);
                 this.oscPrefix = "orientation";
-                break;
+                break;*/
             // 4 int TYPE_GYROSCOPE A constant describing a gyroscope sensor type
             case 4:
                 this.name = getString(R.string.sensor_gyroscope, applicationContext);
                 this.oscPrefix = "gyroscope";
                 break;
             // 5 int TYPE_LIGHT A constant describing a light sensor type.
-            case 5:
+            /*case 5:
                 this.name = getString(R.string.sensor_light, applicationContext);
                 this.oscPrefix = "light";
                 break;
@@ -108,14 +112,14 @@ public class Parameters extends org.sensors2.common.sensors.Parameters {
             case 10:
                 this.name = getString(R.string.sensor_linear_acceleration, applicationContext);
                 this.oscPrefix = "linearacceleration";
-                break;
+                break;*/
             // 11 int TYPE_ROTATION_VECTOR A constant describing a rotation vector sensor type.
             case 11:
                 this.name = getString(R.string.sensor_rotation_vector, applicationContext);
                 this.oscPrefix = "rotationvector";
                 break;
             // 12 int TYPE_RELATIVE_HUMIDITY A constant describing a relative humidity sensor type.
-            case 12:
+            /*case 12:
                 this.name = getString(R.string.sensor_relative_humidity, applicationContext);
                 this.oscPrefix = "relativehumidity";
                 break;
@@ -188,7 +192,7 @@ public class Parameters extends org.sensors2.common.sensors.Parameters {
             case 26:
                 this.name = getString(R.string.sensor_wrist_tilt_gesture, applicationContext);
                 this.oscPrefix = "wristtiltgesture";
-                break;
+                break;*/
             default:
                 this.name = sensor.getName();
                 this.oscPrefix = Integer.toString(sensor.getType());

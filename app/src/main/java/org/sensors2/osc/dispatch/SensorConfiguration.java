@@ -16,6 +16,9 @@ public class SensorConfiguration {
     }
 
     public boolean sendingNeeded(float[] values) {
+        // returns true if sendDuplicates is true or values is different than currentValues
+        // returns false if send is false
+        // AND updates currentValues
         if (!this.send) {
             return false;
         }

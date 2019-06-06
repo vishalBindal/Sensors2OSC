@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
 import org.sensors2.common.sensors.Parameters;
-import org.sensors2.osc.R;
+import org.sensors2.R;
 import org.sensors2.osc.activities.StartUpActivity;
 import org.sensors2.osc.dispatch.Bundling;
 
@@ -26,6 +26,7 @@ public class StartupFragment extends Fragment {
         StartUpActivity activity = (StartUpActivity) getActivity();
         activeButton.setOnCheckedChangeListener(activity);
         for (Parameters parameters : activity.getSensors()) {
+
             createSensorFragments((org.sensors2.osc.sensors.Parameters) parameters);
         }
 
